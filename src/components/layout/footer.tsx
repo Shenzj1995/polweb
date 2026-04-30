@@ -21,13 +21,18 @@ const footerLinks = {
     { label: "Pricing", href: "/pricing" },
     { label: "Explore", href: "/explore" },
   ],
+  Legal: [
+    { label: "Privacy Policy", href: "/privacy" },
+    { label: "Terms of Service", href: "/terms" },
+    { label: "Refund Policy", href: "/refund" },
+  ],
 };
 
 export function Footer() {
   return (
     <footer className="border-t border-border/40 bg-background">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-5">
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
               <h3 className="mb-4 text-sm font-semibold">{category}</h3>
