@@ -1,0 +1,38 @@
+{
+  "slug": "kling-ai",
+  "title": "Kling AI Video Generator — Free Online Text-to-Video & Image-to-Video",
+  "metaTitle": "Kling AI Video Generator | Free Online AI Video Creation",
+  "metaDescription": "Create stunning AI videos with Kling AI. Transform text prompts or images into cinematic videos up to 10s, 1080p. Free to start — no download required.",
+  "h1": "Kling AI Video Generator",
+  "subtitle": "Transform text and images into cinematic AI videos with Kling AI by Kuaishou. Create stunning videos up to 10 seconds in 1080p resolution.",
+  "features": [
+    { "title": "Text to Video", "description": "Describe any scene and watch Kling AI bring it to life with cinematic quality." },
+    { "title": "Image to Video", "description": "Upload a photo and animate it into a dynamic video with natural motion." },
+    { "title": "Up to 10 Seconds", "description": "Generate longer videos with rich detail and smooth transitions." },
+    { "title": "1080p Resolution", "description": "High-definition output suitable for social media and professional use." }
+  ],
+  "useCases": [
+    "Social media content creation for TikTok, Instagram Reels, YouTube Shorts",
+    "Marketing video production without expensive equipment",
+    "Creative storytelling and digital art projects",
+    "Product demos and promotional videos"
+  ],
+  "comparisons": [
+    { "feature": "Max Duration", "kling-ai": "10s", "runway-gen3": "16s", "seedance-2": "10s" },
+    { "feature": "Resolution", "kling-ai": "1080p", "runway-gen3": "1080p", "seedance-2": "720p" },
+    { "feature": "Image to Video", "kling-ai": "Yes", "runway-gen3": "Yes", "seedance-2": "Yes" },
+    { "feature": "Text to Video", "kling-ai": "Yes", "runway-gen3": "Yes", "seedance-2": "Yes" },
+    { "feature": "Credits Cost", "kling-ai": "10", "runway-gen3": "10", "seedance-2": "10" }
+  ],
+  "faq": [
+    { "question": "Is Kling AI free to use?", "answer": "Yes! You get 20 free credits when you sign up. Each Kling AI video costs 10 credits, so you can create 2 videos for free to try it out." },
+    { "question": "How long does Kling AI take to generate a video?", "answer": "Typically 60-90 seconds for a 5-second video, and up to 2 minutes for a 10-second video." },
+    { "question": "What resolution does Kling AI support?", "answer": "Kling AI supports 480p, 720p, and 1080p resolution outputs." },
+    { "question": "Can I use Kling AI for commercial purposes?", "answer": "Yes, videos generated with a paid plan can be used commercially. Check our terms of service for details." }
+  ],
+  "examples": [
+    { "prompt": "A golden retriever running on a beach at sunset, cinematic", "type": "TEXT_TO_VIDEO" },
+    { "prompt": "Cyberpunk cityscape with neon lights and flying cars, 4K", "type": "TEXT_TO_VIDEO" },
+    { "prompt": "A medieval castle on a cliff overlooking the ocean, fog", "type": "TEXT_TO_VIDEO" }
+  ]
+}

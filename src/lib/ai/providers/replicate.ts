@@ -1,4 +1,5 @@
 import Replicate from "replicate";
+import { createHmac } from "node:crypto";
 import { AIProvider, CreateGenParams, GenResult, GenStatusResult, WebhookResult } from "../types";
 
 export class ReplicateProvider implements AIProvider {
@@ -58,9 +59,26 @@ export class ReplicateProvider implements AIProvider {
     };
   }
 
-  verifyWebhook(_body: string, _signature: string): boolean {
-    // TODO: Implement Replicate webhook signature verification
-    return true;
+  verifyWebhook(body: string, signature: string): boolean {
+    if (!process.env.REPLICATE_WEBHOOK_SECRET) return true; // Skip if not configured
+
+    // Replicate sends HMAC-SHA256 signature in the format: sha256=<hex>
+    const expected = createHmac("sha256", process.env.REPLICATE_WEBHOOK_SECRET)
+      .update(body)
+      .digest("hex");
+
+    // Signature may come as "sha256=<hex>" or just "<hex>"
+    const sig = signature.startsWith("sha256=") ? signature.slice(7) : signature;
+
+    if (!sig || !expected) return false;
+
+    // Constant-time comparison
+    if (sig.length !== expected.length) return false;
+    let mismatch = 0;
+    for (let i = 0; i < sig.length; i++) {
+      mismatch |= sig.charCodeAt(i) ^ expected.charCodeAt(i);
+    }
+    return mismatch === 0;
   }
 
   async handleWebhook(payload: Record<string, unknown>): Promise<WebhookResult> {

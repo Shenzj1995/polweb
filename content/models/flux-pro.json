@@ -1,0 +1,30 @@
+{
+  "slug": "flux-pro",
+  "title": "FLUX Pro AI Image Generator — High Quality AI Art Creation",
+  "metaTitle": "FLUX Pro Image Generator | Professional AI Art Online",
+  "metaDescription": "Generate professional-quality AI images with FLUX Pro. Superior detail, accuracy, and artistic control. Free credits to start.",
+  "h1": "FLUX Pro AI Image Generator",
+  "subtitle": "High-quality AI image generation with superior detail, accuracy, and artistic control.",
+  "features": [
+    { "title": "Superior Quality", "description": "Industry-leading image quality with exceptional detail and clarity." },
+    { "title": "Multiple Resolutions", "description": "Generate images at 1024x1024, 1024x768, and 768x1024." },
+    { "title": "Flexible Aspect Ratios", "description": "Support for 1:1, 16:9, 9:16, 3:2, and 2:3 aspect ratios." },
+    { "title": "Batch Generation", "description": "Generate up to 4 images at once for quick exploration." }
+  ],
+  "useCases": [
+    "Professional graphic design and marketing materials",
+    "Social media content and thumbnails",
+    "Concept art and creative projects",
+    "Product mockups and visual prototypes"
+  ],
+  "faq": [
+    { "question": "How much does FLUX Pro cost?", "answer": "Each FLUX Pro image generation costs 3 credits. You get 20 free credits when you sign up." },
+    { "question": "What makes FLUX Pro different from FLUX Schnell?", "answer": "FLUX Pro produces higher quality images with more detail and better prompt adherence, while FLUX Schnell is optimized for speed." },
+    { "question": "Can I use FLUX Pro images commercially?", "answer": "Yes, images generated with a paid plan can be used commercially." }
+  ],
+  "examples": [
+    { "prompt": "Steampunk clockwork city with airships, golden hour", "type": "TEXT_TO_IMAGE" },
+    { "prompt": "Portrait of a futuristic warrior with neon armor", "type": "TEXT_TO_IMAGE" },
+    { "prompt": "Victorian garden party with magical creatures", "type": "TEXT_TO_IMAGE" }
+  ]
+}
