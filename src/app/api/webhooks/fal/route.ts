@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     const signature = request.headers.get("fal-webhook-signature") ?? "";
     const provider = getProvider("fal");
 
-    if (!provider.verifyWebhook(rawBody, signature)) {
+    if (!provider.verifyWebhook(rawBody, signature, request.headers)) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 

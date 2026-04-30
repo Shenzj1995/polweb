@@ -1,5 +1,5 @@
 import Replicate from "replicate";
-import { createHmac } from "node:crypto";
+import { createHmac, timingSafeEqual } from "node:crypto";
 import { AIProvider, CreateGenParams, GenResult, GenStatusResult, WebhookResult } from "../types";
 
 export class ReplicateProvider implements AIProvider {
@@ -59,26 +59,34 @@ export class ReplicateProvider implements AIProvider {
     };
   }
 
-  verifyWebhook(body: string, signature: string): boolean {
+  verifyWebhook(body: string, signature: string, headers?: Headers): boolean {
     if (!process.env.REPLICATE_WEBHOOK_SECRET) return true; // Skip if not configured
 
-    // Replicate sends HMAC-SHA256 signature in the format: sha256=<hex>
-    const expected = createHmac("sha256", process.env.REPLICATE_WEBHOOK_SECRET)
-      .update(body)
-      .digest("hex");
+    const webhookId = headers?.get("webhook-id");
+    const webhookTimestamp = headers?.get("webhook-timestamp");
+    if (!webhookId || !webhookTimestamp || !signature) return false;
 
-    // Signature may come as "sha256=<hex>" or just "<hex>"
-    const sig = signature.startsWith("sha256=") ? signature.slice(7) : signature;
-
-    if (!sig || !expected) return false;
-
-    // Constant-time comparison
-    if (sig.length !== expected.length) return false;
-    let mismatch = 0;
-    for (let i = 0; i < sig.length; i++) {
-      mismatch |= sig.charCodeAt(i) ^ expected.charCodeAt(i);
+    const timestamp = Number(webhookTimestamp);
+    const now = Math.floor(Date.now() / 1000);
+    if (!Number.isFinite(timestamp) || Math.abs(now - timestamp) > 5 * 60) {
+      return false;
     }
-    return mismatch === 0;
+
+    const secret = process.env.REPLICATE_WEBHOOK_SECRET.replace(/^whsec_/, "");
+    const expected = createHmac("sha256", Buffer.from(secret, "base64"))
+      .update(`${webhookId}.${webhookTimestamp}.${body}`)
+      .digest();
+
+    for (const candidate of signature.split(" ")) {
+      const [, value] = candidate.split(",");
+      if (!value) continue;
+      const received = Buffer.from(value, "base64");
+      if (received.length === expected.length && timingSafeEqual(received, expected)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   async handleWebhook(payload: Record<string, unknown>): Promise<WebhookResult> {

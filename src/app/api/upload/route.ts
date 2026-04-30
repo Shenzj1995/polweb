@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { uploadBufferToR2 } from "@/lib/storage";
+import { createSignedDownloadUrl, uploadBufferToR2 } from "@/lib/storage";
 import { randomUUID } from "node:crypto";
 
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -54,15 +54,20 @@ export async function POST(request: Request) {
       contentType: file.type,
     });
 
+    const url = result.publicUrl ?? await createSignedDownloadUrl(result.key, 60 * 30);
+
     return NextResponse.json({
       key: result.key,
-      url: result.publicUrl || key,
+      url,
       contentType: file.type,
       sizeBytes: bytes.byteLength,
     });
   } catch (error) {
     console.error("Upload error:", error);
-    if (error instanceof Error && error.message === "R2_NOT_CONFIGURED") {
+    if (
+      error instanceof Error &&
+      (error.message === "R2_NOT_CONFIGURED" || error.message === "R2_BUCKET_NOT_CONFIGURED")
+    ) {
       return NextResponse.json({ error: "File storage not configured" }, { status: 503 });
     }
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });

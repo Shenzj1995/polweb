@@ -4,7 +4,7 @@ export interface AIProvider {
 
   createGeneration(params: CreateGenParams): Promise<GenResult>;
   getGenerationStatus(providerId: string, providerModelId?: string): Promise<GenStatusResult>;
-  verifyWebhook(body: string, signature: string): boolean;
+  verifyWebhook(body: string, signature: string, headers?: Headers): boolean;
   handleWebhook(payload: unknown): Promise<WebhookResult>;
 }
 

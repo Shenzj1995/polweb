@@ -27,6 +27,7 @@ const initialState: GenerationState = {
 export function useGeneration() {
   const [state, setState] = useState<GenerationState>(initialState);
   const [submitting, setSubmitting] = useState(false);
+  const [isPolling, setIsPolling] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const attemptRef = useRef(0);
 
@@ -35,12 +36,14 @@ export function useGeneration() {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
+    setIsPolling(false);
   }, []);
 
   const startPolling = useCallback(
     (id: string) => {
       stopPolling();
       attemptRef.current = 0;
+      setIsPolling(true);
 
       intervalRef.current = setInterval(async () => {
         attemptRef.current++;
@@ -149,6 +152,6 @@ export function useGeneration() {
     submitting,
     submit,
     reset,
-    isPolling: intervalRef.current !== null,
+    isPolling,
   };
 }

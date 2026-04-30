@@ -50,7 +50,7 @@ export class FalProvider implements AIProvider {
     };
   }
 
-  verifyWebhook(_body: string, _signature: string): boolean {
+  verifyWebhook(): boolean {
     return true;
   }
 

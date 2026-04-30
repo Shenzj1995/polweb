@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     const signature = request.headers.get("webhook-signature") ?? "";
     const provider = getProvider("replicate");
 
-    if (!provider.verifyWebhook(rawBody, signature)) {
+    if (!provider.verifyWebhook(rawBody, signature, request.headers)) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 

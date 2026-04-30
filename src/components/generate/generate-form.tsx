@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useMemo, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -31,7 +31,8 @@ import Link from "next/link";
 
 export function GenerateForm() {
   const [prompt, setPrompt] = useState("");
-  const [selectedModel, setSelectedModel] = useState("kling-ai");
+  const [selectedVideoModel, setSelectedVideoModel] = useState("kling-ai");
+  const [selectedImageModel, setSelectedImageModel] = useState("flux-schnell");
   const [activeTab, setActiveTab] = useState("video");
   const [duration, setDuration] = useState("5");
   const [aspectRatio, setAspectRatio] = useState("16:9");
@@ -42,9 +43,9 @@ export function GenerateForm() {
   const generation = useGeneration();
   const upload = useUpload();
 
-  const videoModels = getModelsByCategory("video");
-  const imageModels = getModelsByCategory("image");
-  const currentModels = activeTab === "video" ? videoModels : imageModels;
+  const videoModels = useMemo(() => getModelsByCategory("video"), []);
+  const imageModels = useMemo(() => getModelsByCategory("image"), []);
+  const selectedModel = activeTab === "video" ? selectedVideoModel : selectedImageModel;
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -72,7 +73,7 @@ export function GenerateForm() {
       type: genType,
       model: selectedModel,
       prompt,
-      imageUrl: inputImageUrl || undefined,
+      imageUrl: activeTab === "video" ? inputImageUrl || undefined : undefined,
       params: {
         duration,
         aspectRatio,
@@ -249,7 +250,7 @@ export function GenerateForm() {
 
           {/* Settings Row */}
           <div className="flex flex-wrap items-center gap-3">
-            <Select value={selectedModel} onValueChange={(v) => v && setSelectedModel(v)}>
+            <Select value={selectedVideoModel} onValueChange={(v) => v && setSelectedVideoModel(v)}>
               <SelectTrigger className="w-[180px] bg-card/50">
                 <SelectValue />
               </SelectTrigger>
@@ -322,7 +323,7 @@ export function GenerateForm() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <Select value={selectedModel} onValueChange={(v) => v && setSelectedModel(v)}>
+            <Select value={selectedImageModel} onValueChange={(v) => v && setSelectedImageModel(v)}>
               <SelectTrigger className="w-[180px] bg-card/50">
                 <SelectValue />
               </SelectTrigger>

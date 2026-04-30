@@ -81,6 +81,7 @@ Events:
 ### AI Providers
 
 - [ ] `REPLICATE_API_TOKEN`
+- [ ] `REPLICATE_WEBHOOK_SECRET`
 - [ ] `FAL_KEY`
 
 Webhook endpoints:
