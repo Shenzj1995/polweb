@@ -57,6 +57,14 @@ export function GenerateForm() {
     }
   };
 
+  const clearReferenceImage = () => {
+    setInputImageUrl(null);
+    upload.reset();
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
 
@@ -234,7 +242,7 @@ export function GenerateForm() {
                   <Badge variant="secondary" className="gap-1 text-xs">
                     <ImageIcon className="h-3 w-3" /> Reference set
                     <button
-                      onClick={() => setInputImageUrl(null)}
+                      onClick={clearReferenceImage}
                       className="ml-1 rounded-full hover:bg-accent"
                     >
                       <X className="h-3 w-3" />
@@ -246,6 +254,23 @@ export function GenerateForm() {
                 {user ? null : <Link href="/login" className="text-violet-400 hover:underline">Sign in</Link>}
               </span>
             </div>
+            {upload.error && (
+              <div className="mt-2 flex items-center gap-2 rounded-md border border-red-500/30 bg-red-500/5 px-3 py-2 text-xs text-red-400">
+                <AlertCircle className="h-3 w-3" />
+                {upload.error}
+              </div>
+            )}
+            {inputImageUrl && (
+              <div className="mt-3 overflow-hidden rounded-lg border border-border/50 bg-muted">
+                <div className="relative aspect-video">
+                  <img
+                    src={inputImageUrl}
+                    alt="Reference image preview"
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Settings Row */}
@@ -300,7 +325,7 @@ export function GenerateForm() {
             <Button
               size="lg"
               className="ml-auto bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white hover:from-violet-600 hover:to-fuchsia-600"
-              disabled={!prompt.trim()}
+              disabled={!prompt.trim() || upload.uploading}
               onClick={handleGenerate}
             >
               <Sparkles className="mr-2 h-4 w-4" />
