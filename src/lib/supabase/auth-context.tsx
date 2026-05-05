@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const [state, setState] = useState<AuthState>({
     user: null,
-    loading: Boolean(supabase),
+    loading: true,
     credits: 0,
     plan: "FREE",
   });
@@ -71,6 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!supabase) {
+      setState((prev) => ({ ...prev, loading: false }));
       return;
     }
 

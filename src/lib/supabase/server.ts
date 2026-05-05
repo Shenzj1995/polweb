@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { createServerFetch } from "@/lib/proxy-fetch";
 
 export async function createClient() {
   const cookieStore = await cookies();
@@ -8,6 +9,9 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      global: {
+        fetch: createServerFetch(),
+      },
       cookies: {
         getAll() {
           return cookieStore.getAll();
@@ -32,6 +36,9 @@ export async function createAdminClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {
+      global: {
+        fetch: createServerFetch(),
+      },
       cookies: {
         getAll() { return []; },
         setAll() {},

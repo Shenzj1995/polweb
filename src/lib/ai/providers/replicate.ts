@@ -1,6 +1,7 @@
 import Replicate from "replicate";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { AIProvider, CreateGenParams, GenResult, GenStatusResult, WebhookResult } from "../types";
+import { createServerFetch } from "@/lib/proxy-fetch";
 
 export class ReplicateProvider implements AIProvider {
   id = "replicate";
@@ -8,7 +9,10 @@ export class ReplicateProvider implements AIProvider {
   private client: Replicate;
 
   constructor() {
-    this.client = new Replicate({ auth: process.env.REPLICATE_API_TOKEN });
+    this.client = new Replicate({
+      auth: process.env.REPLICATE_API_TOKEN,
+      fetch: createServerFetch(),
+    });
   }
 
   async createGeneration(params: CreateGenParams): Promise<GenResult> {
@@ -22,8 +26,12 @@ export class ReplicateProvider implements AIProvider {
     if (params.params.resolution) input.resolution = params.params.resolution;
     if (params.params.seed) input.seed = params.params.seed;
 
+    const modelOrVersion = /^[a-f0-9]{64}$/i.test(params.providerModelId)
+      ? { version: params.providerModelId }
+      : { model: params.providerModelId };
+
     const prediction = await this.client.predictions.create({
-      version: params.providerModelId,
+      ...modelOrVersion,
       input,
       webhook: params.webhookUrl,
       webhook_events_filter: ["completed"],

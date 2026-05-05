@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -23,11 +23,17 @@ const navLinks = [
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { user, loading, credits, plan, signOut } = useAuth();
 
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split("@")[0] || "U";
   const avatarUrl = user?.user_metadata?.avatar_url;
   const initials = displayName.slice(0, 2).toUpperCase();
+  const showLoading = !mounted || loading;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl">
@@ -55,7 +61,7 @@ export function Header() {
 
         {/* Right Side */}
         <div className="flex items-center gap-3">
-          {loading ? (
+          {showLoading ? (
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
           ) : user ? (
             <>

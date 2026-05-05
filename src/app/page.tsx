@@ -16,7 +16,7 @@ export default function HomePage() {
       <main className="flex-1">
         {/* Hero + Generate Form */}
         <section className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-violet-500/5 via-transparent to-transparent" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-violet-500/5 via-transparent to-transparent" />
           <div className="mx-auto max-w-7xl px-4 pb-16 pt-12 sm:px-6 sm:pt-20">
             <div className="mb-8 text-center">
               <h1 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">

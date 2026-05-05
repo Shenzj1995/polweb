@@ -69,8 +69,12 @@ export async function createGeneration(input: CreateGenerationInput) {
     return { generation, creditsRemaining };
   });
 
-  // Call AI provider
-  const webhookUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/webhooks/${model.provider}`;
+  // Call AI provider. Localhost webhooks are not reachable by external providers,
+  // so local/dev runs rely on polling instead.
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const webhookUrl = baseUrl?.startsWith("https://")
+    ? `${baseUrl}/api/webhooks/${model.provider}`
+    : undefined;
   const provider = getProvider(model.provider);
 
   try {

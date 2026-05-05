@@ -1,11 +1,16 @@
 import { AIProvider, CreateGenParams, GenResult, GenStatusResult, WebhookResult } from "../types";
+import { createServerFetch } from "@/lib/proxy-fetch";
 
 export class FalProvider implements AIProvider {
   id = "fal";
   name = "fal.ai";
 
   async createGeneration(params: CreateGenParams): Promise<GenResult> {
-    const { fal } = await import("@fal-ai/client");
+    const { createFalClient } = await import("@fal-ai/client");
+    const fal = createFalClient({
+      credentials: process.env.FAL_KEY,
+      fetch: createServerFetch(),
+    });
 
     const input: Record<string, unknown> = {};
     if (params.prompt) input.prompt = params.prompt;
@@ -28,7 +33,11 @@ export class FalProvider implements AIProvider {
   }
 
   async getGenerationStatus(requestId: string, providerModelId?: string): Promise<GenStatusResult> {
-    const { fal } = await import("@fal-ai/client");
+    const { createFalClient } = await import("@fal-ai/client");
+    const fal = createFalClient({
+      credentials: process.env.FAL_KEY,
+      fetch: createServerFetch(),
+    });
     const modelId = providerModelId ?? "fal-ai/flux-pro";
 
     const status = await fal.queue.status(modelId, {
