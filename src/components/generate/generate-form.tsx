@@ -33,7 +33,7 @@ export function GenerateForm() {
   const [prompt, setPrompt] = useState("");
   const [selectedVideoModel, setSelectedVideoModel] = useState("kling-ai");
   const [selectedImageModel, setSelectedImageModel] = useState("flux-schnell");
-  const [activeTab, setActiveTab] = useState("image");
+  const [activeTab, setActiveTab] = useState("video");
   const [duration, setDuration] = useState("5");
   const [aspectRatio, setAspectRatio] = useState("16:9");
   const [inputImageUrl, setInputImageUrl] = useState<string | null>(null);
@@ -195,7 +195,7 @@ export function GenerateForm() {
     <div className="mx-auto w-full max-w-3xl">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-4 w-full justify-start bg-muted/50 p-1">
-          <TabsTrigger value="video" className="gap-2" disabled>
+          <TabsTrigger value="video" className="gap-2">
             <VideoIcon className="h-4 w-4" /> AI Video
           </TabsTrigger>
           <TabsTrigger value="image" className="gap-2">
@@ -204,9 +204,6 @@ export function GenerateForm() {
         </TabsList>
 
         <TabsContent value="video" className="space-y-4">
-          <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-4 text-sm text-yellow-300">
-            Video generation is temporarily disabled while provider models are being verified.
-          </div>
           {/* Prompt Input */}
           <div className="relative">
             <Textarea

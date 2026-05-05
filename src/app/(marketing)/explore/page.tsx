@@ -2,85 +2,39 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, Heart, Eye, VideoIcon, ImageIcon } from "lucide-react";
+import Link from "next/link";
+import { models } from "@/config/models";
+import { tools } from "@/config/tools";
+import {
+  Sparkles,
+  VideoIcon,
+  ImageIcon,
+  ArrowRight,
+  Type,
+  ImagePlus,
+  RefreshCw,
+  Film,
+  UserRound,
+} from "lucide-react";
 
-// Placeholder community content
-const communityPosts = [
-  {
-    id: "1",
-    type: "video",
-    prompt: "A samurai walking through cherry blossoms in slow motion",
-    model: "Kling AI",
-    author: "creative_viz",
-    likes: 234,
-    views: 1820,
-  },
-  {
-    id: "2",
-    type: "image",
-    prompt: "Steampunk clockwork city with airships, golden hour",
-    model: "FLUX Pro",
-    author: "ai_artistry",
-    likes: 189,
-    views: 1450,
-  },
-  {
-    id: "3",
-    type: "video",
-    prompt: "Ocean waves crashing on crystal rocks, drone shot",
-    model: "Seedance 2.0",
-    author: "nature_lens",
-    likes: 312,
-    views: 2340,
-  },
-  {
-    id: "4",
-    type: "image",
-    prompt: "Portrait of a futuristic warrior with neon armor",
-    model: "FLUX Pro",
-    author: "digital_realm",
-    likes: 156,
-    views: 980,
-  },
-  {
-    id: "5",
-    type: "video",
-    prompt: "Time-lapse of Northern Lights over Icelandic mountains",
-    model: "Runway Gen-3",
-    author: "astro_visuals",
-    likes: 445,
-    views: 3120,
-  },
-  {
-    id: "6",
-    type: "image",
-    prompt: "Victorian garden party with magical creatures",
-    model: "Stable Diffusion 3",
-    author: "whimsical_ai",
-    likes: 201,
-    views: 1560,
-  },
-  {
-    id: "7",
-    type: "video",
-    prompt: "Underwater bioluminescent creatures in deep ocean",
-    model: "Luma AI",
-    author: "deep_blue",
-    likes: 278,
-    views: 2100,
-  },
-  {
-    id: "8",
-    type: "image",
-    prompt: "Miniature world inside a snow globe, macro photography",
-    model: "FLUX Schnell",
-    author: "tiny_worlds",
-    likes: 167,
-    views: 1230,
-  },
-];
+const toolIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+  Type,
+  ImagePlay: ImageIcon,
+  ImagePlus,
+  RefreshCw,
+  Film,
+  UserRound,
+};
+
+export const metadata = {
+  title: "Explore - AI Studio",
+  description: "Discover AI models, tools, and capabilities. Get inspired and start creating.",
+};
 
 export default function ExplorePage() {
+  const hotModels = Object.values(models).filter((m) => m.isHot || m.isNew);
+  const allTools = Object.values(tools);
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -90,56 +44,124 @@ export default function ExplorePage() {
           <div className="mb-12 text-center">
             <h1 className="mb-4 text-4xl font-bold">Explore</h1>
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              Discover amazing AI creations from the community. Get inspired and create your own.
+              Discover AI models and tools. One platform, every top model.
             </p>
           </div>
 
-          {/* Gallery Grid */}
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {communityPosts.map((post) => (
-              <Card
-                key={post.id}
-                className="group cursor-pointer overflow-hidden border-border/50 transition-all hover:border-violet-500/50"
-              >
-                {/* Thumbnail */}
-                <div className="relative aspect-square bg-muted">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    {post.type === "video" ? (
-                      <VideoIcon className="h-10 w-10 text-muted-foreground" />
-                    ) : (
-                      <ImageIcon className="h-10 w-10 text-muted-foreground" />
-                    )}
-                  </div>
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 via-transparent to-transparent p-3 opacity-0 transition-opacity group-hover:opacity-100">
-                    <p className="text-xs text-white line-clamp-2">{post.prompt}</p>
-                  </div>
-                  {post.type === "video" && (
-                    <Badge className="absolute left-2 top-2 bg-black/60 text-white backdrop-blur-sm">
-                      <VideoIcon className="mr-1 h-3 w-3" /> Video
-                    </Badge>
-                  )}
-                </div>
+          {/* Hot & New Models */}
+          <section className="mb-12">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-2xl font-bold">Trending Models</h2>
+              <Link href="/models" className="flex items-center gap-1 text-sm text-violet-400 hover:text-violet-300">
+                View all models <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {hotModels.map((model) => (
+                <Link key={model.id} href={`/models/${model.slug}`}>
+                  <Card className="group h-full cursor-pointer border-border/50 bg-card/50 transition-all hover:border-violet-500/50 hover:bg-card">
+                    <CardContent className="p-5">
+                      <div className="mb-3 flex items-center gap-2">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-500/10">
+                          {model.category === "video" ? (
+                            <VideoIcon className="h-5 w-5 text-violet-400" />
+                          ) : (
+                            <ImageIcon className="h-5 w-5 text-violet-400" />
+                          )}
+                        </div>
+                        <div>
+                          <h3 className="font-semibold">{model.name}</h3>
+                          <div className="flex items-center gap-1">
+                            {model.isHot && (
+                              <Badge className="bg-orange-500/20 text-orange-400 text-[10px] px-1">Hot</Badge>
+                            )}
+                            {model.isNew && (
+                              <Badge className="bg-green-500/20 text-green-400 text-[10px] px-1">New</Badge>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground line-clamp-2">{model.description}</p>
+                      <div className="mt-3 flex flex-wrap gap-1.5">
+                        {model.type.map((t) => (
+                          <Badge key={t} variant="outline" className="text-[10px]">
+                            {t.replace(/_/g, " ").toLowerCase()}
+                          </Badge>
+                        ))}
+                      </div>
+                      <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
+                        <span>{model.provider}</span>
+                        <span>~{model.avgGenerationTime}s</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </section>
 
-                <CardContent className="p-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">@{post.author}</span>
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Heart className="h-3 w-3" /> {post.likes}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Eye className="h-3 w-3" /> {post.views}
-                      </span>
-                    </div>
-                  </div>
-                  <Badge variant="secondary" className="mt-2 text-[10px]">
-                    {post.model}
-                  </Badge>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {/* All Tools */}
+          <section className="mb-12">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-2xl font-bold">AI Tools</h2>
+              <Link href="/tools" className="flex items-center gap-1 text-sm text-violet-400 hover:text-violet-300">
+                View all tools <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {allTools.map((tool) => {
+                const Icon = toolIcons[tool.icon];
+                return (
+                  <Link key={tool.id} href={`/tools/${tool.slug}`}>
+                    <Card className="group h-full cursor-pointer border-border/50 bg-card/50 transition-all hover:border-violet-500/50 hover:bg-card">
+                      <CardContent className="p-5">
+                        <div className="mb-3 flex items-center gap-3">
+                          <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${
+                            tool.category === "video" ? "bg-violet-500/10" : "bg-fuchsia-500/10"
+                          }`}>
+                            {Icon && <Icon className={`h-5 w-5 ${
+                              tool.category === "video" ? "text-violet-400" : "text-fuchsia-400"
+                            }`} />}
+                          </div>
+                          <div>
+                            <h3 className="font-semibold">{tool.name}</h3>
+                            <Badge variant="outline" className="text-[10px]">{tool.creditsCost} credits</Badge>
+                          </div>
+                        </div>
+                        <p className="text-sm text-muted-foreground line-clamp-2">{tool.description}</p>
+                        <div className="mt-3 flex flex-wrap gap-1">
+                          {tool.models.map((m) => {
+                            const model = models[m];
+                            return (
+                              <Badge key={m} variant="secondary" className="text-[10px]">
+                                {model?.name ?? m}
+                              </Badge>
+                            );
+                          })}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* CTA */}
+          <Card className="border-violet-500/30 bg-gradient-to-br from-violet-500/5 to-fuchsia-500/5">
+            <CardContent className="flex flex-col items-center gap-4 p-8 text-center sm:flex-row sm:text-left">
+              <div className="flex-1">
+                <h2 className="text-xl font-bold">Ready to create?</h2>
+                <p className="text-muted-foreground">Start with 20 free credits. No credit card required.</p>
+              </div>
+              <Link
+                href="/generate"
+                className="inline-flex h-11 items-center gap-2 rounded-lg bg-gradient-to-r from-violet-500 to-fuchsia-500 px-6 text-sm font-medium text-white hover:from-violet-600 hover:to-fuchsia-600"
+              >
+                <Sparkles className="h-4 w-4" /> Start Generating
+              </Link>
+            </CardContent>
+          </Card>
         </div>
       </main>
       <Footer />
