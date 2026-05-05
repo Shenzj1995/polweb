@@ -11,10 +11,12 @@ export function generateStaticParams() {
   return Object.keys(effects).map((slug) => ({ slug }));
 }
 
-export function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const effect = effects[slug];
   return {
-    title: `AI Effect`,
-    description: "Apply stunning AI effects to transform your images and videos.",
+    title: effect ? `${effect.name} - AI Studio` : "AI Effect - AI Studio",
+    description: effect?.description ?? "Apply stunning AI effects to transform your images and videos.",
   };
 }
 

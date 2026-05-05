@@ -150,7 +150,9 @@ export default function BillingPage() {
             />
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            Credits reset at the start of each billing cycle
+            {userPlan === "FREE"
+              ? "Sign-up credits are one-time. Upgrade for monthly credits."
+              : "Credits reset at the start of each billing cycle"}
           </p>
         </CardContent>
       </Card>

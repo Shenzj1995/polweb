@@ -388,6 +388,32 @@ export function GenerateForm() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Quick Prompts */}
+      <div className="mt-6">
+        <h2 className="mb-3 text-sm font-medium text-muted-foreground">
+          Try these prompts
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          {[
+            "A golden retriever running on a beach at sunset, cinematic",
+            "Cyberpunk cityscape with neon lights and flying cars",
+            "A medieval castle on a cliff overlooking the ocean, fog",
+            "Astronaut floating in space with earth in background",
+            "Underwater coral reef with tropical fish, 4K",
+            "Time-lapse of a flower blooming in a garden",
+          ].map((p) => (
+            <Badge
+              key={p}
+              variant="outline"
+              className="cursor-pointer border-border/50 px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-violet-500/50 hover:text-foreground"
+              onClick={() => setPrompt(p)}
+            >
+              {p.slice(0, 50)}{p.length > 50 ? "..." : ""}
+            </Badge>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

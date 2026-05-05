@@ -11,11 +11,12 @@ export function generateStaticParams() {
   return Object.keys(models).map((slug) => ({ slug }));
 }
 
-export function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  // This will be awaited in Next.js 15, but we handle it synchronously for SSG
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const model = models[slug];
   return {
-    title: `AI Video & Image Generator`,
-    description: "Generate stunning AI videos and images with the best AI models.",
+    title: model ? `${model.name} - AI Studio` : "AI Model - AI Studio",
+    description: model?.description ?? "Generate stunning AI videos and images with the best AI models.",
   };
 }
 

@@ -3,9 +3,15 @@
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, Sparkles, AlertCircle, CheckCircle, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Clock, Sparkles, AlertCircle, CheckCircle, Loader2, ChevronLeft, ChevronRight, Download } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/lib/supabase/auth-context";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 const statusConfig: Record<string, { icon: typeof Loader2; label: string; className: string; iconClass: string }> = {
   PROCESSING: { icon: Loader2, label: "Processing", className: "bg-blue-500/20 text-blue-400", iconClass: "animate-spin" },
@@ -44,6 +50,7 @@ export default function HistoryPage() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [nowMs] = useState(() => Date.now());
+  const [preview, setPreview] = useState<GenerationItem | null>(null);
   const limit = 10;
 
   useEffect(() => {
@@ -133,7 +140,11 @@ export default function HistoryPage() {
               const StatusIcon = status.icon;
 
               return (
-                <Card key={gen.id} className="border-border/50">
+                <Card
+                  key={gen.id}
+                  className="cursor-pointer border-border/50 transition-colors hover:border-violet-500/30"
+                  onClick={() => gen.outputUrl && setPreview(gen)}
+                >
                   <CardContent className="flex items-center gap-4 p-4">
                     {/* Thumbnail */}
                     <div className="flex h-16 w-24 shrink-0 items-center justify-center rounded-lg bg-muted overflow-hidden">
@@ -199,6 +210,35 @@ export default function HistoryPage() {
           )}
         </>
       )}
+
+      {/* Preview Dialog */}
+      <Dialog open={!!preview} onOpenChange={(open) => !open && setPreview(null)}>
+        <DialogContent className="sm:max-w-3xl">
+          {preview && (
+            <>
+              <DialogTitle>{preview.prompt || preview.type.replace(/_/g, " ").toLowerCase()}</DialogTitle>
+              <DialogDescription>
+                {preview.model} &middot; {preview.type.replace(/_/g, " ").toLowerCase()} &middot; {preview.creditsCost} credits
+              </DialogDescription>
+              <div className="mt-2 overflow-hidden rounded-lg bg-muted">
+                {preview.outputType === "video" ? (
+                  <video src={preview.outputUrl!} controls className="max-h-[70vh] w-full object-contain" />
+                ) : (
+                  <img src={preview.outputUrl!} alt="" className="max-h-[70vh] w-full object-contain" />
+                )}
+              </div>
+              <div className="flex justify-end">
+                <button
+                  onClick={() => window.open(preview.outputUrl!, "_blank")}
+                  className="inline-flex h-9 items-center gap-2 rounded-md border border-border px-4 text-sm font-medium hover:bg-accent"
+                >
+                  <Download className="h-4 w-4" /> Download
+                </button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

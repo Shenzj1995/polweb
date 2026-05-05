@@ -12,10 +12,12 @@ export function generateStaticParams() {
   return Object.keys(tools).map((slug) => ({ slug }));
 }
 
-export function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const tool = tools[slug];
   return {
-    title: `AI Tool`,
-    description: "Powerful AI tools for video and image generation.",
+    title: tool ? `${tool.name} - AI Studio` : "AI Tool - AI Studio",
+    description: tool?.description ?? "Powerful AI tools for video and image generation.",
   };
 }
 
