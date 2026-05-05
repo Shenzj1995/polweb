@@ -78,17 +78,19 @@ export async function createGeneration(input: CreateGenerationInput) {
   const provider = getProvider(model.provider);
 
   try {
-    const aiResult = await provider.createGeneration({
-      type: input.type,
-      model: input.modelSlug,
-      providerModelId: model.providerModelId,
-      prompt: input.prompt,
-      negativePrompt: input.negativePrompt,
-      imageUrl: input.imageUrl,
-      videoUrl: input.videoUrl,
-      params: input.params,
-      webhookUrl,
-    });
+    const aiResult = await withRetry(() =>
+      provider.createGeneration({
+        type: input.type,
+        model: input.modelSlug,
+        providerModelId: model.providerModelId,
+        prompt: input.prompt,
+        negativePrompt: input.negativePrompt,
+        imageUrl: input.imageUrl,
+        videoUrl: input.videoUrl,
+        params: input.params,
+        webhookUrl,
+      })
+    );
 
     await prisma.generation.update({
       where: { id: result.generation.id },
@@ -130,4 +132,33 @@ function getGenerationExpiry(plan: string) {
   if (plan === "FREE") return new Date(now + 7 * 24 * 60 * 60 * 1000);
   if (plan === "STARTER") return new Date(now + 30 * 24 * 60 * 60 * 1000);
   return null;
+}
+
+async function withRetry<T>(fn: () => Promise<T>, maxRetries = 2): Promise<T> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      if (attempt < maxRetries && isRetryable(error)) {
+        const delay = Math.pow(2, attempt) * 1000;
+        console.warn(`Provider call failed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${delay}ms...`);
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw lastError;
+}
+
+function isRetryable(error: unknown): boolean {
+  if (error instanceof Error) {
+    const msg = error.message.toLowerCase();
+    if (msg.includes("timeout") || msg.includes("econnreset") || msg.includes("econnrefused") || msg.includes("network")) return true;
+    if (msg.includes("429") || msg.includes("rate limit") || msg.includes("too many")) return true;
+    if (msg.includes("500") || msg.includes("502") || msg.includes("503") || msg.includes("504")) return true;
+  }
+  return false;
 }

@@ -18,7 +18,7 @@ const statusConfig: Record<string, { icon: typeof Loader2; label: string; classN
   SUCCEEDED: { icon: CheckCircle, label: "Completed", className: "bg-green-500/20 text-green-400", iconClass: "" },
   FAILED: { icon: AlertCircle, label: "Failed", className: "bg-red-500/20 text-red-400", iconClass: "" },
   PENDING: { icon: Clock, label: "Queued", className: "bg-yellow-500/20 text-yellow-400", iconClass: "" },
-  CANCELLED: { icon: AlertCircle, label: "Cancelled", className: "bg-gray-500/20 text-gray-400", iconClass: "" },
+  CANCELLED: { icon: AlertCircle, label: "Cancelled", className: "bg-muted/20 text-muted-foreground", iconClass: "" },
 };
 
 interface GenerationItem {
