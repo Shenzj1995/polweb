@@ -10,6 +10,17 @@ import { useRouter } from "next/navigation";
 
 const planOrder: PlanKey[] = ["FREE", "STARTER", "PRO"];
 
+const productIdMap: Record<string, { monthly: string; annual: string }> = {
+  STARTER: {
+    monthly: process.env.NEXT_PUBLIC_DODO_STARTER_MONTHLY_PRODUCT_ID || "",
+    annual: process.env.NEXT_PUBLIC_DODO_STARTER_ANNUAL_PRODUCT_ID || "",
+  },
+  PRO: {
+    monthly: process.env.NEXT_PUBLIC_DODO_PRO_MONTHLY_PRODUCT_ID || "",
+    annual: process.env.NEXT_PUBLIC_DODO_PRO_ANNUAL_PRODUCT_ID || "",
+  },
+};
+
 export function PricingCards() {
   const [annual, setAnnual] = useState(false);
   const [loadingPlan, setLoadingPlan] = useState<PlanKey | null>(null);
@@ -17,7 +28,6 @@ export function PricingCards() {
   const router = useRouter();
 
   const handleCheckout = async (planKey: PlanKey) => {
-    // Wait for auth to finish loading
     if (loading) return;
 
     if (!user) {
@@ -25,20 +35,27 @@ export function PricingCards() {
       return;
     }
 
+    const productId = annual
+      ? productIdMap[planKey]?.annual
+      : productIdMap[planKey]?.monthly;
+
+    if (!productId) {
+      alert("Payment is not configured yet. Please try again later.");
+      return;
+    }
+
     setLoadingPlan(planKey);
     try {
-      const res = await fetch("/api/stripe/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planKey, annual }),
-      });
+      const res = await fetch(
+        `/api/dodo/checkout?productId=${productId}&email=${encodeURIComponent(user.email || "")}`,
+      );
 
       const data = await res.json();
 
-      if (data.url) {
-        window.location.assign(data.url);
+      if (data.checkout_url) {
+        window.location.assign(data.checkout_url);
       } else {
-        console.error("Checkout error:", data.error, "status:", res.status);
+        console.error("Checkout error:", data);
         alert(data.error || "Failed to start checkout");
       }
     } catch (err) {
@@ -112,7 +129,7 @@ export function PricingCards() {
                         </span>
                       )}
                       <span className="text-4xl font-extrabold">${price}</span>
-                      <span className="text-sm text-muted-foreground">/mo</span>
+                      <span className="text-sm text-muted-foreground"> USD/mo</span>
                     </div>
                   ) : (
                     <span className="text-4xl font-extrabold">Free</span>

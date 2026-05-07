@@ -28,7 +28,7 @@ export default function BillingPage() {
       const verifySubscription = async () => {
         setVerifying(true);
         try {
-          await fetch("/api/stripe/verify", { method: "POST" });
+          await fetch("/api/dodo/verify", { method: "POST" });
           await refreshCredits();
           setVerified(true);
           window.location.href = "/billing";
@@ -53,7 +53,13 @@ export default function BillingPage() {
   const handleManageBilling = async () => {
     setPortalLoading(true);
     try {
-      const res = await fetch("/api/stripe/portal", { method: "POST" });
+      const dbUser = await fetch("/api/user/profile").then(r => r.json());
+      const customerId = dbUser?.stripeCustomerId;
+      if (!customerId) {
+        alert("No billing account found");
+        return;
+      }
+      const res = await fetch(`/api/dodo/portal?customer_id=${customerId}`);
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
