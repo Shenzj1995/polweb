@@ -11,6 +11,9 @@ export const metadata: Metadata = {
   },
   description:
     "All-in-one AI video and image generation platform. Create stunning videos and images with Kling AI, Runway, FLUX, and more.",
+  alternates: {
+    canonical: "https://polzj.com",
+  },
 };
 
 export default function RootLayout({
