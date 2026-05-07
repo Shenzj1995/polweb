@@ -25,6 +25,7 @@ const footerLinks = {
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
     { label: "Refund Policy", href: "/refund" },
+    { label: "Acceptable Use", href: "/acceptable-use" },
   ],
 };
 
