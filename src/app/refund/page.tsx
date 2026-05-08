@@ -18,7 +18,7 @@ export default function RefundPage() {
           body: [
             "Subscriptions renew automatically unless canceled before the next billing date.",
             "Canceling a subscription stops future renewal. It does not automatically refund the current billing period.",
-            "If you believe you were charged in error, contact support with your account email and payment receipt.",
+            "If you believe you were charged in error, contact us at support@polzj.com with your account email and payment receipt.",
           ],
         },
         {

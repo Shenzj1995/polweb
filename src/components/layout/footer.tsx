@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { siteConfig } from "@/config/site";
 
 const footerLinks = {
   "Video Models": [
@@ -20,6 +21,7 @@ const footerLinks = {
   Company: [
     { label: "Pricing", href: "/pricing" },
     { label: "Explore", href: "/explore" },
+    { label: "Contact Us", href: `mailto:${siteConfig.supportEmail}` },
   ],
   Legal: [
     { label: "Privacy Policy", href: "/privacy" },
