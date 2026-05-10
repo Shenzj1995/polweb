@@ -33,8 +33,10 @@ export class ReplicateProvider implements AIProvider {
     const prediction = await this.client.predictions.create({
       ...modelOrVersion,
       input,
-      webhook: params.webhookUrl,
-      webhook_events_filter: ["completed"],
+      ...(params.webhookUrl ? {
+        webhook: params.webhookUrl,
+        webhook_events_filter: ["completed"],
+      } : {}),
     });
 
     return {

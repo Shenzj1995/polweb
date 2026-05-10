@@ -90,7 +90,8 @@ export function useGeneration() {
       params?: Record<string, unknown>;
     }) => {
       setSubmitting(true);
-      setState({ ...initialState, status: "PENDING" });
+      // 不要立即设置为 PENDING，等 API 响应后再设置
+      setState(initialState);
 
       try {
         const res = await fetch("/api/generate", {
