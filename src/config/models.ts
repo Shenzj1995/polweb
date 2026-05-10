@@ -9,7 +9,7 @@ export type GenerationType =
 export interface ModelConfig {
   id: string;
   name: string;
-  provider: "replicate" | "fal" | "kling" | "runway" | "luma" | "stability";
+  provider: "piapi" | "replicate" | "fal";
   providerModelId: string;
   type: GenerationType[];
   category: "video" | "image";
@@ -31,8 +31,8 @@ export const models: Record<string, ModelConfig> = {
   "kling-ai": {
     id: "kling-ai",
     name: "Kling AI",
-    provider: "replicate",
-    providerModelId: "kuaishou/kling-v1.5",
+    provider: "piapi",
+    providerModelId: "kling-v1.5",
     type: ["TEXT_TO_VIDEO", "IMAGE_TO_VIDEO"],
     category: "video",
     supportedParams: {
@@ -51,8 +51,8 @@ export const models: Record<string, ModelConfig> = {
   "seedance-2": {
     id: "seedance-2",
     name: "Seedance 2.0",
-    provider: "replicate",
-    providerModelId: "bytedance/seedance-2",
+    provider: "piapi",
+    providerModelId: "seedance-v2",
     type: ["TEXT_TO_VIDEO", "IMAGE_TO_VIDEO"],
     category: "video",
     supportedParams: {
@@ -71,8 +71,8 @@ export const models: Record<string, ModelConfig> = {
   "flux-schnell": {
     id: "flux-schnell",
     name: "FLUX Schnell",
-    provider: "replicate",
-    providerModelId: "black-forest-labs/flux-schnell",
+    provider: "piapi",
+    providerModelId: "flux-schnell",
     type: ["TEXT_TO_IMAGE"],
     category: "image",
     supportedParams: {
@@ -91,8 +91,8 @@ export const models: Record<string, ModelConfig> = {
   "flux-pro": {
     id: "flux-pro",
     name: "FLUX Pro",
-    provider: "fal",
-    providerModelId: "fal-ai/flux-pro",
+    provider: "piapi",
+    providerModelId: "flux-pro",
     type: ["TEXT_TO_IMAGE"],
     category: "image",
     supportedParams: {
@@ -111,7 +111,7 @@ export const models: Record<string, ModelConfig> = {
   "runway-gen3": {
     id: "runway-gen3",
     name: "Runway Gen-3",
-    provider: "replicate",
+    provider: "piapi",
     providerModelId: "runway-gen3",
     type: ["TEXT_TO_VIDEO", "IMAGE_TO_VIDEO"],
     category: "video",
@@ -131,8 +131,8 @@ export const models: Record<string, ModelConfig> = {
   "luma-ai": {
     id: "luma-ai",
     name: "Luma Dream Machine",
-    provider: "replicate",
-    providerModelId: "luma/dream-machine",
+    provider: "piapi",
+    providerModelId: "luma-ai",
     type: ["TEXT_TO_VIDEO", "IMAGE_TO_VIDEO"],
     category: "video",
     supportedParams: {
@@ -151,8 +151,8 @@ export const models: Record<string, ModelConfig> = {
   "stable-diffusion-3": {
     id: "stable-diffusion-3",
     name: "Stable Diffusion 3",
-    provider: "replicate",
-    providerModelId: "stability-ai/sdxl",
+    provider: "piapi",
+    providerModelId: "stable-diffusion-3",
     type: ["TEXT_TO_IMAGE", "IMAGE_TO_IMAGE"],
     category: "image",
     supportedParams: {
