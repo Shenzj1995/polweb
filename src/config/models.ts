@@ -9,7 +9,9 @@ export type GenerationType =
 export interface ModelConfig {
   id: string;
   name: string;
-  provider: "piapi" | "replicate" | "fal";
+  provider: "piapi" | "grsai" | "replicate" | "fal";
+  fallbackProvider?: "piapi" | "grsai" | "replicate" | "fal";
+  fallbackProviderModelId?: string;
   providerModelId: string;
   type: GenerationType[];
   category: "video" | "image";
@@ -87,6 +89,8 @@ export const models: Record<string, ModelConfig> = {
     isNew: false,
     slug: "flux-schnell",
     description: "Lightning-fast AI image generation by Black Forest Labs.",
+    fallbackProvider: "grsai",
+    fallbackProviderModelId: "flux-schnell",
   },
   "flux-pro": {
     id: "flux-pro",
@@ -107,6 +111,8 @@ export const models: Record<string, ModelConfig> = {
     isNew: false,
     slug: "flux-pro",
     description: "High-quality AI image generation with superior detail and accuracy.",
+    fallbackProvider: "grsai",
+    fallbackProviderModelId: "flux-pro",
   },
   "runway-gen3": {
     id: "runway-gen3",
@@ -167,6 +173,8 @@ export const models: Record<string, ModelConfig> = {
     isNew: false,
     slug: "stable-diffusion-3",
     description: "The classic open-source AI image generation model by Stability AI.",
+    fallbackProvider: "grsai",
+    fallbackProviderModelId: "stable-diffusion-3",
   },
 };
 

@@ -90,7 +90,25 @@ export async function createGeneration(input: CreateGenerationInput) {
         params: input.params,
         webhookUrl,
       })
-    );
+    ).catch(async (primaryError) => {
+      // Fallback to alternate provider if configured
+      if (model.fallbackProvider && model.fallbackProviderModelId) {
+        console.warn(`Primary provider ${model.provider} failed, falling back to ${model.fallbackProvider}:`, primaryError);
+        const fallback = getProvider(model.fallbackProvider);
+        return fallback.createGeneration({
+          type: input.type,
+          model: input.modelSlug,
+          providerModelId: model.fallbackProviderModelId,
+          prompt: input.prompt,
+          negativePrompt: input.negativePrompt,
+          imageUrl: input.imageUrl,
+          videoUrl: input.videoUrl,
+          params: input.params,
+          webhookUrl,
+        });
+      }
+      throw primaryError;
+    });
 
     await prisma.generation.update({
       where: { id: result.generation.id },
