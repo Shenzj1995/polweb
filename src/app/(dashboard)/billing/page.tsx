@@ -8,10 +8,10 @@ import { CreditCard, ArrowUpRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { PLANS } from "@/config/plans";
 import { useAuth } from "@/lib/supabase/auth-context";
+import { CreemPortal } from "@creem_io/nextjs";
 
 export default function BillingPage() {
   const { user, credits, plan: userPlan, loading, refreshCredits } = useAuth();
-  const [portalLoading, setPortalLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState(false);
   const [creditHistory, setCreditHistory] = useState<
@@ -28,7 +28,7 @@ export default function BillingPage() {
       const verifySubscription = async () => {
         setVerifying(true);
         try {
-          await fetch("/api/dodo/verify", { method: "POST" });
+          await fetch("/api/creem/verify", { method: "POST" });
           await refreshCredits();
           setVerified(true);
           window.location.href = "/billing";
@@ -50,28 +50,15 @@ export default function BillingPage() {
       .catch(() => {});
   }, [user]);
 
-  const handleManageBilling = async () => {
-    setPortalLoading(true);
-    try {
-      const dbUser = await fetch("/api/user/profile").then(r => r.json());
-      const customerId = dbUser?.stripeCustomerId;
-      if (!customerId) {
-        alert("No billing account found");
-        return;
-      }
-      const res = await fetch(`/api/dodo/portal?customer_id=${customerId}`);
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert(data.error || "No billing account found");
-      }
-    } catch {
-      alert("Failed to open billing portal");
-    } finally {
-      setPortalLoading(false);
-    }
-  };
+  const [customerId, setCustomerId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    fetch("/api/user/profile")
+      .then((r) => r.json())
+      .then((data) => setCustomerId(data?.stripeCustomerId ?? null))
+      .catch(() => {});
+  }, [user]);
 
   if (loading || verifying) {
     return (
@@ -100,20 +87,24 @@ export default function BillingPage() {
               </Badge>
             </div>
             {userPlan !== "FREE" ? (
-              <button
-                onClick={handleManageBilling}
-                disabled={portalLoading}
-                className="inline-flex h-8 items-center gap-1 rounded-md border border-border px-3 text-xs font-medium transition-colors hover:bg-accent disabled:opacity-60"
-              >
-                {portalLoading ? (
-                  <Loader2 className="h-3 w-3 animate-spin" />
-                ) : (
-                  <>
+              customerId ? (
+                <CreemPortal customerId={customerId} portalPath="/api/creem/portal">
+                  <button
+                    className="inline-flex h-8 items-center gap-1 rounded-md border border-border px-3 text-xs font-medium transition-colors hover:bg-accent"
+                  >
                     <CreditCard className="h-3 w-3" />
                     Manage Billing
-                  </>
-                )}
-              </button>
+                  </button>
+                </CreemPortal>
+              ) : (
+                <button
+                  disabled
+                  className="inline-flex h-8 items-center gap-1 rounded-md border border-border px-3 text-xs font-medium opacity-60"
+                >
+                  <CreditCard className="h-3 w-3" />
+                  Manage Billing
+                </button>
+              )
             ) : (
               <Link
                 href="/pricing"

@@ -48,7 +48,7 @@ export default function PrivacyPage() {
             "We rely on the following categories of third-party services:",
             "Authentication and Database: Supabase (supabase.com) for user authentication and data storage.",
             "AI Model Providers: Replicate (replicate.com), fal.ai, and other providers for AI generation processing.",
-            "Payment Processing: DodoPayments (dodopayments.com) acts as the Merchant of Record, handling payment collection, tax compliance, and refund processing.",
+            "Payment Processing: DodoPayments (dodopayments.com) or Creem (creem.io) acts as the Merchant of Record, handling payment collection, tax compliance, and refund processing.",
             "Cloud Storage: AWS S3 / Cloudflare R2 for storing generated assets and uploaded files.",
             "Hosting: Vercel (vercel.com) for application hosting and delivery.",
             "These providers process information according to their own terms and privacy policies.",

@@ -64,7 +64,7 @@ export default function RefundPage() {
         {
           title: "How Refunds Are Issued",
           body: [
-            "Eligible subscription or payment refunds are returned to the original payment method through our payment processor, DodoPayments, acting as the Merchant of Record.",
+            "Eligible subscription or payment refunds are returned to the original payment method through our payment processor (DodoPayments or Creem), acting as the Merchant of Record.",
             "Eligible generation failures are handled as credit refunds to your account balance.",
             "Refunds to your payment method typically take 5–10 business days to appear, depending on your bank, card network, or local payment method.",
           ],
@@ -72,7 +72,7 @@ export default function RefundPage() {
         {
           title: "Payment Processor",
           body: [
-            "Payments and refunds are processed by DodoPayments (dodopayments.com), acting as the Merchant of Record. DodoPayments is the legal seller for billing purposes and handles payment collection, tax remittance, and refund processing on our behalf.",
+            "Payments and refunds are processed by DodoPayments (dodopayments.com) or Creem (creem.io), acting as the Merchant of Record. The payment processor is the legal seller for billing purposes and handles payment collection, tax remittance, and refund processing on our behalf.",
           ],
         },
         {

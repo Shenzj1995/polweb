@@ -14,6 +14,7 @@
     "@aws-sdk/client-s3": "^3.1037.0",
     "@aws-sdk/s3-request-presigner": "^3.1037.0",
     "@base-ui/react": "^1.4.1",
+    "@creem_io/nextjs": "^0.5.0",
     "@dodopayments/nextjs": "^0.3.6",
     "@fal-ai/client": "^1.10.0",
     "@hookform/resolvers": "^5.2.2",

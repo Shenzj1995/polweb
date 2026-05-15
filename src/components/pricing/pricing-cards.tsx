@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Check, Loader2, Sparkles } from "lucide-react";
 import { PLANS, type PlanKey } from "@/config/plans";
 import { useAuth } from "@/lib/supabase/auth-context";
+import { CreemCheckout } from "@creem_io/nextjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -12,59 +13,19 @@ const planOrder: PlanKey[] = ["FREE", "STARTER", "PRO"];
 
 const productIdMap: Record<string, { monthly: string; annual: string }> = {
   STARTER: {
-    monthly: process.env.NEXT_PUBLIC_DODO_STARTER_MONTHLY_PRODUCT_ID || "",
-    annual: process.env.NEXT_PUBLIC_DODO_STARTER_ANNUAL_PRODUCT_ID || "",
+    monthly: process.env.NEXT_PUBLIC_CREEM_STARTER_MONTHLY_PRODUCT_ID || "",
+    annual: process.env.NEXT_PUBLIC_CREEM_STARTER_ANNUAL_PRODUCT_ID || "",
   },
   PRO: {
-    monthly: process.env.NEXT_PUBLIC_DODO_PRO_MONTHLY_PRODUCT_ID || "",
-    annual: process.env.NEXT_PUBLIC_DODO_PRO_ANNUAL_PRODUCT_ID || "",
+    monthly: process.env.NEXT_PUBLIC_CREEM_PRO_MONTHLY_PRODUCT_ID || "",
+    annual: process.env.NEXT_PUBLIC_CREEM_PRO_ANNUAL_PRODUCT_ID || "",
   },
 };
 
 export function PricingCards() {
   const [annual, setAnnual] = useState(false);
-  const [loadingPlan, setLoadingPlan] = useState<PlanKey | null>(null);
   const { user, loading } = useAuth();
   const router = useRouter();
-
-  const handleCheckout = async (planKey: PlanKey) => {
-    if (loading) return;
-
-    if (!user) {
-      router.push("/login?redirect=/pricing");
-      return;
-    }
-
-    const productId = annual
-      ? productIdMap[planKey]?.annual
-      : productIdMap[planKey]?.monthly;
-
-    if (!productId) {
-      alert("Payment is not configured yet. Please try again later.");
-      return;
-    }
-
-    setLoadingPlan(planKey);
-    try {
-      const res = await fetch(
-        `/api/dodo/checkout?productId=${productId}&email=${encodeURIComponent(user.email || "")}`,
-      );
-
-      const data = await res.json();
-
-      if (data.checkout_url) {
-        window.location.assign(data.checkout_url);
-      } else {
-        console.error("Checkout error:", data);
-        alert(data.error || "Failed to start checkout");
-      }
-    } catch (err) {
-      console.error("Checkout fetch error:", err);
-      alert("Something went wrong. Please try again.");
-    } finally {
-      setLoadingPlan(null);
-    }
-  };
 
   return (
     <div>
@@ -97,7 +58,9 @@ export function PricingCards() {
           const plan = PLANS[key];
           const price = annual ? plan.annualPrice : plan.price;
           const isPro = key === "PRO";
-          const isLoading = loadingPlan === key;
+          const productId = annual
+            ? productIdMap[key]?.annual
+            : productIdMap[key]?.monthly;
 
           return (
             <div
@@ -166,21 +129,41 @@ export function PricingCards() {
                 >
                   Try Now
                 </Link>
-              ) : (
+              ) : loading ? null : !user ? (
                 <button
-                  onClick={() => handleCheckout(key)}
-                  disabled={isLoading}
-                  className={`mt-auto flex h-10 w-full items-center justify-center rounded-lg text-sm font-medium transition-colors disabled:opacity-60 ${
+                  onClick={() => router.push("/login?redirect=/pricing")}
+                  className={`mt-auto flex h-10 w-full items-center justify-center rounded-lg text-sm font-medium transition-colors ${
                     isPro
                       ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-md hover:from-violet-600 hover:to-fuchsia-600"
                       : "bg-primary text-primary-foreground hover:bg-primary/90"
                   }`}
                 >
-                  {isLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    "Get Started"
-                  )}
+                  Get Started
+                </button>
+              ) : productId ? (
+                <CreemCheckout
+                  productId={productId}
+                  referenceId={user.id}
+                  customer={{ email: user.email || undefined, name: user.user_metadata?.name || undefined }}
+                  checkoutPath="/api/creem/checkout"
+                  successUrl="/billing?success=true"
+                >
+                  <button
+                    className={`mt-auto flex h-10 w-full items-center justify-center rounded-lg text-sm font-medium transition-colors ${
+                      isPro
+                        ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-md hover:from-violet-600 hover:to-fuchsia-600"
+                        : "bg-primary text-primary-foreground hover:bg-primary/90"
+                    }`}
+                  >
+                    Get Started
+                  </button>
+                </CreemCheckout>
+              ) : (
+                <button
+                  disabled
+                  className="mt-auto flex h-10 w-full items-center justify-center rounded-lg text-sm font-medium opacity-60"
+                >
+                  Coming Soon
                 </button>
               )}
             </div>
