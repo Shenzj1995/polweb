@@ -2,6 +2,7 @@ import { prisma } from "@/db";
 import { getProvider } from "@/lib/ai/registry";
 import { models } from "@/config/models";
 import { spendCredits, refundGenerationCredits } from "@/lib/credits";
+import { translatePrompt } from "@/lib/ai/translate";
 import type { GenerationType } from "@/types/generation";
 import type { Prisma } from "@prisma/client";
 
@@ -24,24 +25,27 @@ export async function createGeneration(input: CreateGenerationInput) {
   if (!creditsCost) throw new Error("UNSUPPORTED_TYPE");
   if (!model.type.includes(input.type)) throw new Error("UNSUPPORTED_TYPE");
 
-  const result = await prisma.$transaction(async (tx) => {
-    const activeCount = await tx.generation.count({
+  // Pre-check concurrency outside the transaction to keep it short
+  const [user, activeCount] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: input.userId },
+      select: { plan: true, credits: true },
+    }),
+    prisma.generation.count({
       where: {
         userId: input.userId,
         status: { in: ["PENDING", "PROCESSING"] },
       },
-    });
+    }),
+  ]);
 
-    const user = await tx.user.findUnique({
-      where: { id: input.userId },
-      select: { plan: true },
-    });
+  if (!user) throw new Error("USER_NOT_FOUND");
+  if (user.credits < creditsCost) throw new Error("INSUFFICIENT_CREDITS");
 
-    if (!user) throw new Error("USER_NOT_FOUND");
+  const parallelLimit = user.plan === "PRO" ? 3 : user.plan === "STARTER" ? 2 : 1;
+  if (activeCount >= parallelLimit) throw new Error("CONCURRENCY_LIMIT");
 
-    const parallelLimit = user.plan === "PRO" ? 3 : user.plan === "STARTER" ? 2 : 1;
-    if (activeCount >= parallelLimit) throw new Error("CONCURRENCY_LIMIT");
-
+  const result = await prisma.$transaction(async (tx) => {
     const generation = await tx.generation.create({
       data: {
         userId: input.userId,
@@ -77,14 +81,20 @@ export async function createGeneration(input: CreateGenerationInput) {
     : undefined;
   const provider = getProvider(model.provider);
 
+  // Translate non-English prompts to English for better model results
+  const [translatedPrompt, translatedNegativePrompt] = await Promise.all([
+    input.prompt ? translatePrompt(input.prompt) : undefined,
+    input.negativePrompt ? translatePrompt(input.negativePrompt) : undefined,
+  ]);
+
   try {
     const aiResult = await withRetry(() =>
       provider.createGeneration({
         type: input.type,
         model: input.modelSlug,
         providerModelId: model.providerModelId,
-        prompt: input.prompt,
-        negativePrompt: input.negativePrompt,
+        prompt: translatedPrompt,
+        negativePrompt: translatedNegativePrompt,
         imageUrl: input.imageUrl,
         videoUrl: input.videoUrl,
         params: input.params,
@@ -99,8 +109,8 @@ export async function createGeneration(input: CreateGenerationInput) {
           type: input.type,
           model: input.modelSlug,
           providerModelId: model.fallbackProviderModelId,
-          prompt: input.prompt,
-          negativePrompt: input.negativePrompt,
+          prompt: translatedPrompt,
+          negativePrompt: translatedNegativePrompt,
           imageUrl: input.imageUrl,
           videoUrl: input.videoUrl,
           params: input.params,
