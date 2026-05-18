@@ -86,10 +86,15 @@ export async function GET(
 
     let downloadUrl: string | null = null;
     if (generation.status === "SUCCEEDED" && generation.outputUrl) {
-      try {
-        downloadUrl = await createSignedDownloadUrl(generation.outputUrl);
-      } catch {
+      // Only sign URLs that are R2 keys (not full external URLs)
+      if (generation.outputUrl.startsWith("http")) {
         downloadUrl = generation.outputUrl;
+      } else {
+        try {
+          downloadUrl = await createSignedDownloadUrl(generation.outputUrl);
+        } catch {
+          downloadUrl = generation.outputUrl;
+        }
       }
     }
 

@@ -11,6 +11,7 @@ interface GenerationState {
   errorMessage: string | null;
   creditsCost: number | null;
   creditsRemaining: number | null;
+  startedAt: number | null;
 }
 
 const initialState: GenerationState = {
@@ -22,6 +23,7 @@ const initialState: GenerationState = {
   errorMessage: null,
   creditsCost: null,
   creditsRemaining: null,
+  startedAt: null,
 };
 
 export function useGeneration() {
@@ -47,7 +49,6 @@ export function useGeneration() {
 
       intervalRef.current = setInterval(async () => {
         attemptRef.current++;
-        // Stop after 200 attempts (~6.7 minutes at 2s intervals)
         if (attemptRef.current > 200) {
           stopPolling();
           setState((prev) => ({ ...prev, status: "FAILED", errorMessage: "Generation timed out" }));
@@ -90,7 +91,6 @@ export function useGeneration() {
       params?: Record<string, unknown>;
     }) => {
       setSubmitting(true);
-      // 不要立即设置为 PENDING，等 API 响应后再设置
       setState(initialState);
 
       try {
@@ -118,6 +118,7 @@ export function useGeneration() {
           status: data.status,
           creditsCost: data.creditsCost,
           creditsRemaining: data.creditsRemaining,
+          startedAt: Date.now(),
         }));
 
         startPolling(data.id);
@@ -143,7 +144,6 @@ export function useGeneration() {
     setSubmitting(false);
   }, [stopPolling]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => stopPolling();
   }, [stopPolling]);

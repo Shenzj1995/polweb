@@ -54,6 +54,9 @@ export async function GET(request: Request) {
       items.map(async (item) => {
         if (!item.outputUrl) return item;
 
+        // Only sign R2 keys (not full external URLs)
+        if (item.outputUrl.startsWith("http")) return item;
+
         try {
           return {
             ...item,

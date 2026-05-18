@@ -1,6 +1,7 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { GenerateForm } from "@/components/generate/generate-form";
+import { HistoryGallery } from "@/components/generate/history-gallery";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
@@ -32,6 +33,8 @@ export default function HomePage() {
             <GenerateForm />
           </div>
         </section>
+
+        <HistoryGallery />
 
         {/* Featured Models */}
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">

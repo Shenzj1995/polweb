@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -23,7 +23,7 @@ import {
   AlertCircle,
   Download,
 } from "lucide-react";
-import { getModelsByCategory } from "@/config/models";
+import { getModelsByCategory, models } from "@/config/models";
 import { useGeneration } from "@/hooks/use-generation";
 import { useUpload } from "@/hooks/use-upload";
 import { useAuth } from "@/lib/supabase/auth-context";
@@ -165,29 +165,13 @@ export function GenerateForm() {
   // Show progress during generation
   if (isBusy) {
     return (
-      <div className="mx-auto w-full max-w-3xl">
-        <div className="rounded-xl border border-violet-500/30 bg-violet-500/5 p-6">
-          <div className="mb-4 flex items-center gap-3">
-            <Loader2 className="h-5 w-5 animate-spin text-violet-400" />
-            <div>
-              <h3 className="font-semibold">
-                {generation.status === "PENDING" ? "Queuing..." : "Generating..."}
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                {generation.creditsCost && `-${generation.creditsCost} credits`}
-              </p>
-            </div>
-          </div>
-
-          {/* Progress bar */}
-          <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-            <div className="h-full animate-pulse rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" style={{ width: "60%" }} />
-          </div>
-          <p className="mt-2 text-xs text-muted-foreground">
-            AI is creating your {activeTab === "video" ? "video" : "image"}. This usually takes 30-120 seconds.
-          </p>
-        </div>
-      </div>
+      <GenerationProgress
+        status={generation.status}
+        startedAt={generation.startedAt}
+        modelSlug={selectedModel}
+        creditsCost={generation.creditsCost}
+        type={activeTab}
+      />
     );
   }
 
@@ -410,6 +394,75 @@ export function GenerateForm() {
             </Badge>
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function GenerationProgress({
+  status,
+  startedAt,
+  modelSlug,
+  creditsCost,
+  type,
+}: {
+  status: string | null;
+  startedAt: number | null;
+  modelSlug: string;
+  creditsCost: number | null;
+  type: string;
+}) {
+  const [elapsed, setElapsed] = useState(0);
+  const avgTime = models[modelSlug]?.avgGenerationTime ?? 30;
+
+  useEffect(() => {
+    if (!startedAt) return;
+    const tick = () => setElapsed(Math.floor((Date.now() - startedAt) / 1000));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [startedAt]);
+
+  const progress = Math.min((elapsed / avgTime) * 100, 95);
+  const remaining = Math.max(avgTime - elapsed, 0);
+  const isQueuing = status === "PENDING";
+
+  return (
+    <div className="mx-auto w-full max-w-3xl">
+      <div className="rounded-xl border border-violet-500/30 bg-violet-500/5 p-6">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Loader2 className="h-5 w-5 animate-spin text-violet-400" />
+            <div>
+              <h3 className="font-semibold">
+                {isQueuing ? "Queuing..." : "Generating..."}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {creditsCost && `-${creditsCost} credits`}
+              </p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="text-2xl font-bold tabular-nums text-violet-400">
+              {remaining > 0 ? `${remaining}s` : "Almost..."}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {elapsed}s elapsed
+            </p>
+          </div>
+        </div>
+
+        <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-all duration-1000 ease-linear"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          {isQueuing
+            ? "Waiting for an available slot..."
+            : `AI is creating your ${type === "video" ? "video" : "image"}. Usually ~${avgTime}s for this model.`}
+        </p>
       </div>
     </div>
   );

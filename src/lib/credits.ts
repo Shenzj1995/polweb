@@ -10,7 +10,7 @@ export async function spendCredits(params: {
   description: string;
   refId: string;
 }) {
-  const updated = await params.tx.user.updateMany({
+  const user = await params.tx.user.update({
     where: {
       id: params.userId,
       credits: { gte: params.amount },
@@ -18,16 +18,10 @@ export async function spendCredits(params: {
     data: {
       credits: { decrement: params.amount },
     },
-  });
-
-  if (updated.count !== 1) {
-    throw new Error("INSUFFICIENT_CREDITS");
-  }
-
-  const user = await params.tx.user.findUniqueOrThrow({
-    where: { id: params.userId },
     select: { credits: true },
   });
+
+  if (!user) throw new Error("INSUFFICIENT_CREDITS");
 
   await params.tx.creditLog.create({
     data: {
