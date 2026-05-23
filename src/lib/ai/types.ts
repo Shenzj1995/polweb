@@ -29,6 +29,7 @@ export interface GenResult {
 export interface GenStatusResult {
   status: "PENDING" | "PROCESSING" | "SUCCEEDED" | "FAILED";
   outputUrl?: string;
+  thumbnailUrl?: string;
   error?: string;
 }
 
@@ -36,5 +37,6 @@ export interface WebhookResult {
   providerId: string;
   status: "SUCCEEDED" | "FAILED";
   outputUrl?: string;
+  thumbnailUrl?: string;
   error?: string;
 }

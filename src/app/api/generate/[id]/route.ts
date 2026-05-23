@@ -53,12 +53,16 @@ export async function GET(
             // 或者可以调用 processProviderResult 完整处理
             let outputUrl = generation.outputUrl;
             let outputType = generation.outputType;
+            let thumbnailUrl = generation.thumbnailUrl;
             let errorMessage = generation.errorMessage;
             let errorCode = generation.errorCode;
 
             if (providerStatus.status === "SUCCEEDED" && providerStatus.outputUrl) {
               outputUrl = providerStatus.outputUrl;
               outputType = generation.type.includes("VIDEO") ? "video" : "image";
+              if (providerStatus.thumbnailUrl) {
+                thumbnailUrl = providerStatus.thumbnailUrl;
+              }
             }
             if (providerStatus.status === "FAILED") {
               errorMessage = providerStatus.error ?? "Provider failed";
@@ -71,6 +75,7 @@ export async function GET(
                 status: providerStatus.status,
                 outputUrl,
                 outputType,
+                thumbnailUrl,
                 errorCode,
                 errorMessage,
                 completedAt: new Date(),

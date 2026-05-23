@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, Sparkles, AlertCircle, CheckCircle, Loader2, ChevronLeft, ChevronRight, Download } from "lucide-react";
+import { Clock, Sparkles, AlertCircle, CheckCircle, Loader2, ChevronLeft, ChevronRight, Download, VideoIcon } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/lib/supabase/auth-context";
 import {
@@ -30,6 +30,7 @@ interface GenerationItem {
   creditsCost: number;
   outputUrl: string | null;
   outputType: string | null;
+  thumbnailUrl: string | null;
   createdAt: string;
   completedAt: string | null;
 }
@@ -149,11 +150,15 @@ export default function HistoryPage() {
                     {/* Thumbnail */}
                     <div className="flex h-16 w-24 shrink-0 items-center justify-center rounded-lg bg-muted overflow-hidden">
                       {gen.outputUrl ? (
-                        <img
-                          src={gen.outputUrl}
-                          alt=""
-                          className="h-full w-full object-cover"
-                        />
+                        gen.outputType === "video" ? (
+                          gen.thumbnailUrl ? (
+                            <img src={gen.thumbnailUrl} alt="" className="h-full w-full object-cover" />
+                          ) : (
+                            <VideoIcon className="h-6 w-6 text-muted-foreground" />
+                          )
+                        ) : (
+                          <img src={gen.outputUrl} alt="" className="h-full w-full object-cover" />
+                        )
                       ) : (
                         <Sparkles className="h-6 w-6 text-muted-foreground" />
                       )}

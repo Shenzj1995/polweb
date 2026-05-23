@@ -30,6 +30,7 @@ interface GenItem {
   creditsCost: number;
   outputUrl: string | null;
   outputType: string | null;
+  thumbnailUrl: string | null;
   createdAt: string;
 }
 
@@ -98,7 +99,16 @@ export function HistoryGallery() {
                   {item.outputUrl ? (
                     item.outputType === "video" ? (
                       <div className="relative flex h-full w-full items-center justify-center">
-                        <VideoIcon className="h-5 w-5 text-muted-foreground/60" />
+                        {item.thumbnailUrl ? (
+                          <img
+                            src={item.thumbnailUrl}
+                            alt=""
+                            className="h-full w-full object-cover"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <VideoIcon className="h-5 w-5 text-muted-foreground/60" />
+                        )}
                         <div className="absolute inset-0 flex items-center justify-center">
                           <Play className="h-6 w-6 text-white/70 drop-shadow" />
                         </div>

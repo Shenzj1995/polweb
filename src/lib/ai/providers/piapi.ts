@@ -154,20 +154,32 @@ export class PiAPIProvider implements AIProvider {
     };
 
     let outputUrl: string | undefined;
+    let thumbnailUrl: string | undefined;
     if (data.output) {
-      // Image output
+      // Top-level image/video URL
       if (data.output.image_url) {
         outputUrl = data.output.image_url;
+      } else if (data.output.video_url) {
+        outputUrl = data.output.video_url;
       }
-      // Video output
+      // Video output via works array: works[0].video.resource (with or without watermark)
       if (data.output.works && Array.isArray(data.output.works) && data.output.works.length > 0) {
-        outputUrl = data.output.works[0].video_url || data.output.works[0].url;
+        const work = data.output.works[0];
+        if (work.video && typeof work.video === "object") {
+          outputUrl = outputUrl || work.video.resource_without_watermark || work.video.resource;
+        }
+        if (!outputUrl) outputUrl = work.video_url || work.url;
+        // Extract cover/thumbnail
+        if (work.cover && typeof work.cover === "object") {
+          thumbnailUrl = work.cover.resource_without_watermark || work.cover.resource;
+        }
       }
     }
 
     return {
       status: statusMap[data.status] || "PENDING",
       outputUrl,
+      thumbnailUrl,
       error: data.error?.message || undefined,
     };
   }
@@ -181,11 +193,23 @@ export class PiAPIProvider implements AIProvider {
     const output = data.output as Record<string, unknown> | undefined;
 
     let outputUrl: string | undefined;
+    let thumbnailUrl: string | undefined;
     if (output) {
       if (output.image_url) outputUrl = output.image_url as string;
+      if (output.video_url) outputUrl = output.video_url as string;
       if (output.works) {
-        const works = output.works as Array<Record<string, string>>;
-        if (works.length > 0) outputUrl = works[0].video_url || works[0].url;
+        const works = output.works as Array<Record<string, unknown>>;
+        if (works.length > 0) {
+          const video = works[0].video as Record<string, string> | undefined;
+          if (video && typeof video === "object") {
+            outputUrl = outputUrl || video.resource_without_watermark || video.resource;
+          }
+          if (!outputUrl) outputUrl = (works[0].video_url as string) || (works[0].url as string);
+          const cover = works[0].cover as Record<string, string> | undefined;
+          if (cover && typeof cover === "object") {
+            thumbnailUrl = cover.resource_without_watermark || cover.resource;
+          }
+        }
       }
     }
 
@@ -193,6 +217,7 @@ export class PiAPIProvider implements AIProvider {
       providerId: data.task_id as string,
       status: data.status === "completed" ? "SUCCEEDED" : "FAILED",
       outputUrl,
+      thumbnailUrl,
       error: (data.error as Record<string, string>)?.message || undefined,
     };
   }
