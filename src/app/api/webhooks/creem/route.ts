@@ -42,7 +42,8 @@ export const POST = Webhook({
   onCheckoutCompleted: async ({ product, customer, subscription }) => {
     console.log("Creem checkout completed:", customer?.email, product.name, subscription?.id);
   },
-  onSubscriptionCanceled: async ({ metadata, customer }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- Customer parameter required by Creem webhook signature
+  onSubscriptionCanceled: async ({ metadata, customer: _customer }) => {
     const userId = metadata?.referenceId as string | undefined;
     if (!userId) return;
 

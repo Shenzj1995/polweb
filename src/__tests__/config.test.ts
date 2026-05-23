@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { models, getModel, getModelsByCategory, getHotModels } from "@/config/models";
 import { tools, getTool, getToolsByCategory } from "@/config/tools";
-import { effects, getEffect, getEffectsByCategory } from "@/config/effects";
+import { getEffect, getEffectsByCategory } from "@/config/effects";
 import { PLANS, getPriceId } from "@/config/plans";
 
 describe("models config", () => {

@@ -2,6 +2,16 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ReplicateProvider } from "@/lib/ai/providers/replicate";
 import type { CreateGenParams } from "@/lib/ai/types";
 
+// Type for testing - exposes private client property
+type TestReplicateProvider = ReplicateProvider & {
+  client: {
+    predictions: {
+      create: ReturnType<typeof vi.fn>;
+      get: ReturnType<typeof vi.fn>;
+    };
+  };
+};
+
 // Mock the Replicate SDK
 vi.mock("replicate", () => {
   return {
@@ -30,7 +40,7 @@ describe("ReplicateProvider", () => {
   describe("createGeneration", () => {
     it("maps prompt to input correctly", async () => {
       const mockPrediction = { id: "pred-123", status: "starting" };
-      (provider as any).client.predictions.create.mockResolvedValue(mockPrediction);
+      (provider as TestReplicateProvider).client.predictions.create.mockResolvedValue(mockPrediction);
 
       const params: CreateGenParams = {
         type: "TEXT_TO_IMAGE",
@@ -42,7 +52,7 @@ describe("ReplicateProvider", () => {
 
       const result = await provider.createGeneration(params);
 
-      const call = (provider as any).client.predictions.create.mock.calls[0][0];
+      const call = (provider as TestReplicateProvider).client.predictions.create.mock.calls[0][0];
       expect(call.model).toBe("black-forest-labs/flux-schnell");
       expect(call.input.prompt).toBe("A beautiful sunset");
       expect(call.input.aspect_ratio).toBe("16:9");
@@ -52,7 +62,7 @@ describe("ReplicateProvider", () => {
 
     it("uses version for 64-char hex providerModelId", async () => {
       const mockPrediction = { id: "pred-456", status: "processing" };
-      (provider as any).client.predictions.create.mockResolvedValue(mockPrediction);
+      (provider as TestReplicateProvider).client.predictions.create.mockResolvedValue(mockPrediction);
 
       const hash = "a".repeat(64);
       const params: CreateGenParams = {
@@ -65,14 +75,14 @@ describe("ReplicateProvider", () => {
 
       await provider.createGeneration(params);
 
-      const call = (provider as any).client.predictions.create.mock.calls[0][0];
+      const call = (provider as TestReplicateProvider).client.predictions.create.mock.calls[0][0];
       expect(call.version).toBe(hash);
       expect(call.model).toBeUndefined();
     });
 
     it("includes imageUrl as image in input", async () => {
       const mockPrediction = { id: "pred-789", status: "starting" };
-      (provider as any).client.predictions.create.mockResolvedValue(mockPrediction);
+      (provider as TestReplicateProvider).client.predictions.create.mockResolvedValue(mockPrediction);
 
       const params: CreateGenParams = {
         type: "IMAGE_TO_VIDEO",
@@ -85,14 +95,14 @@ describe("ReplicateProvider", () => {
 
       await provider.createGeneration(params);
 
-      const call = (provider as any).client.predictions.create.mock.calls[0][0];
+      const call = (provider as TestReplicateProvider).client.predictions.create.mock.calls[0][0];
       expect(call.input.image).toBe("https://example.com/img.jpg");
       expect(call.input.duration).toBe("5");
     });
 
     it("includes webhook only when webhookUrl is provided", async () => {
       const mockPrediction = { id: "pred-w", status: "starting" };
-      (provider as any).client.predictions.create.mockResolvedValue(mockPrediction);
+      (provider as TestReplicateProvider).client.predictions.create.mockResolvedValue(mockPrediction);
 
       const params: CreateGenParams = {
         type: "TEXT_TO_IMAGE",
@@ -105,14 +115,14 @@ describe("ReplicateProvider", () => {
 
       await provider.createGeneration(params);
 
-      const call = (provider as any).client.predictions.create.mock.calls[0][0];
+      const call = (provider as TestReplicateProvider).client.predictions.create.mock.calls[0][0];
       expect(call.webhook).toBe("https://example.com/webhook");
       expect(call.webhook_events_filter).toEqual(["completed"]);
     });
 
     it("omits webhook when webhookUrl is undefined", async () => {
       const mockPrediction = { id: "pred-nw", status: "starting" };
-      (provider as any).client.predictions.create.mockResolvedValue(mockPrediction);
+      (provider as TestReplicateProvider).client.predictions.create.mockResolvedValue(mockPrediction);
 
       const params: CreateGenParams = {
         type: "TEXT_TO_IMAGE",
@@ -124,14 +134,14 @@ describe("ReplicateProvider", () => {
 
       await provider.createGeneration(params);
 
-      const call = (provider as any).client.predictions.create.mock.calls[0][0];
+      const call = (provider as TestReplicateProvider).client.predictions.create.mock.calls[0][0];
       expect(call.webhook).toBeUndefined();
     });
   });
 
   describe("getGenerationStatus", () => {
     it("maps succeeded status and extracts output URL", async () => {
-      (provider as any).client.predictions.get.mockResolvedValue({
+      (provider as TestReplicateProvider).client.predictions.get.mockResolvedValue({
         status: "succeeded",
         output: "https://output.url/image.png",
       });
@@ -142,7 +152,7 @@ describe("ReplicateProvider", () => {
     });
 
     it("extracts first URL from array output", async () => {
-      (provider as any).client.predictions.get.mockResolvedValue({
+      (provider as TestReplicateProvider).client.predictions.get.mockResolvedValue({
         status: "succeeded",
         output: ["https://output.url/1.png", "https://output.url/2.png"],
       });
@@ -152,7 +162,7 @@ describe("ReplicateProvider", () => {
     });
 
     it("maps failed status with error", async () => {
-      (provider as any).client.predictions.get.mockResolvedValue({
+      (provider as TestReplicateProvider).client.predictions.get.mockResolvedValue({
         status: "failed",
         error: "OOM",
       });
@@ -163,11 +173,11 @@ describe("ReplicateProvider", () => {
     });
 
     it("maps processing and starting correctly", async () => {
-      (provider as any).client.predictions.get.mockResolvedValue({ status: "processing", output: null });
+      (provider as TestReplicateProvider).client.predictions.get.mockResolvedValue({ status: "processing", output: null });
       const r1 = await provider.getGenerationStatus("pred-123");
       expect(r1.status).toBe("PROCESSING");
 
-      (provider as any).client.predictions.get.mockResolvedValue({ status: "starting", output: null });
+      (provider as TestReplicateProvider).client.predictions.get.mockResolvedValue({ status: "starting", output: null });
       const r2 = await provider.getGenerationStatus("pred-123");
       expect(r2.status).toBe("PENDING");
     });

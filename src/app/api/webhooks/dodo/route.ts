@@ -7,6 +7,16 @@ import { grantCreditsOnce } from "@/lib/credits";
 // We don't use the @dodopayments/nextjs Webhooks helper because it
 // crashes at build time when DODO_PAYMENTS_WEBHOOK_KEY is empty.
 
+interface DodoWebhookPayload {
+  type: string;
+  payload_id: string;
+  customer_id?: string;
+  product_id?: string;
+  metadata?: {
+    userId?: string;
+  };
+}
+
 async function verifySignature(body: string, signature: string): Promise<boolean> {
   const crypto = await import("node:crypto");
   const secret = process.env.DODO_PAYMENTS_WEBHOOK_KEY;
@@ -24,7 +34,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
-  let payload: any;
+  let payload: DodoWebhookPayload;
   try {
     payload = JSON.parse(body);
   } catch {
@@ -60,7 +70,7 @@ export async function POST(request: Request) {
   return NextResponse.json({ received: true });
 }
 
-async function handleSubscriptionActive(payload: any) {
+async function handleSubscriptionActive(payload: DodoWebhookPayload) {
   const customerId = payload.customer_id;
   const metadata = payload.metadata || {};
   const userId = metadata.userId;
@@ -88,7 +98,7 @@ async function handleSubscriptionActive(payload: any) {
   });
 }
 
-async function handleSubscriptionCancelled(payload: any) {
+async function handleSubscriptionCancelled(payload: DodoWebhookPayload) {
   const metadata = payload.metadata || {};
   const userId = metadata.userId;
   if (!userId) return;
@@ -99,7 +109,7 @@ async function handleSubscriptionCancelled(payload: any) {
   });
 }
 
-async function handleSubscriptionRenewed(payload: any) {
+async function handleSubscriptionRenewed(payload: DodoWebhookPayload) {
   const metadata = payload.metadata || {};
   const userId = metadata.userId;
   if (!userId) return;

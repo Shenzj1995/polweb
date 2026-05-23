@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Check, Loader2, Sparkles } from "lucide-react";
+import { Check, Sparkles } from "lucide-react";
 import { PLANS, type PlanKey } from "@/config/plans";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { CreemCheckout } from "@creem_io/nextjs";

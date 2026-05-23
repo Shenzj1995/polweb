@@ -13,7 +13,8 @@ type StripeSubscriptionWithPeriod = Awaited<
 };
 
 // POST /api/stripe/verify — Verify and sync subscription after checkout
-export async function POST(request: Request) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Request parameter required by Next.js API route signature
+export async function POST(_request: Request) {
   try {
     const supabase = await createClient();
     const {

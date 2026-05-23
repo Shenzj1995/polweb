@@ -31,9 +31,11 @@ export function Header() {
   const initials = displayName.slice(0, 2).toUpperCase();
   const showLoading = !mounted || loading;
 
+  /* eslint-disable react-hooks/set-state-in-effect -- Required for SSR hydration safety */
   useEffect(() => {
     setMounted(true);
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl">

@@ -9,7 +9,6 @@ import {
   Clock,
   CreditCard,
   Image as ImageIcon,
-  Settings,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";

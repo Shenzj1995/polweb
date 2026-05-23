@@ -9,7 +9,7 @@ function getApiKey(): string {
   return key;
 }
 
-async function apiFetch(path: string, options: RequestInit = {}): Promise<any> {
+async function apiFetch(path: string, options: RequestInit = {}): Promise<unknown> {
   const res = await createServerFetch()(`${BASE_URL}${path}`, {
     ...options,
     headers: {
@@ -19,7 +19,7 @@ async function apiFetch(path: string, options: RequestInit = {}): Promise<any> {
     },
   });
 
-  const json = await res.json();
+  const json = await res.json() as { code?: number; message?: string; data?: unknown };
   if (json.code !== 200) {
     throw new Error(json.message || `PiAPI error: ${json.code}`);
   }

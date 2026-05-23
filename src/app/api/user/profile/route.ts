@@ -4,7 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { grantCreditsOnce } from "@/lib/credits";
 
 // GET /api/user/profile — Get user profile with credits
-export async function GET(request: Request) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Request parameter required by Next.js API route signature
+export async function GET(_request: Request) {
   try {
     // Try to get user from Supabase auth first
     const supabase = await createClient();

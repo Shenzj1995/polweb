@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { FalProvider } from "@/lib/ai/providers/fal";
-import type { CreateGenParams } from "@/lib/ai/types";
 
 // Mock @fal-ai/client
 vi.mock("@fal-ai/client", () => ({
@@ -28,9 +27,6 @@ describe("FalProvider", () => {
 
   describe("createGeneration", () => {
     it("maps params correctly for text-to-image", async () => {
-      const mockResult = { request_id: "req-123" };
-      const falClient = (provider as any).fal;
-
       // The createGeneration method dynamically imports and creates client
       // So we test via the handleWebhook which doesn't need the SDK
       // Instead, verify the provider id and interface contract

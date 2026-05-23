@@ -4,7 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/db";
 
 // POST /api/stripe/portal — Create a Stripe Customer Portal session
-export async function POST(request: Request) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Request parameter required by Next.js API route signature
+export async function POST(_request: Request) {
   try {
     const supabase = await createClient();
     const {
