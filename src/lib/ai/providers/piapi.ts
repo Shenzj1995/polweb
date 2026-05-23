@@ -47,7 +47,7 @@ const modelMapping: Record<string, {
   },
   // Seedance video
   "seedance-v2": {
-    model: "seedance-2.0",
+    model: "seedance-01",
     taskType: "video_generation",
     mapInput: (p) => ({
       prompt: p.prompt || "",
