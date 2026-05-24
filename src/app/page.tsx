@@ -7,6 +7,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { models } from "@/config/models";
 
+// Force dynamic rendering to avoid stale CDN cache
+export const dynamic = "force-dynamic";
+
 const hotModels = Object.values(models).filter((m) => m.isHot || m.isNew).slice(0, 6);
 
 export default function HomePage() {

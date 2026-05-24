@@ -26,6 +26,9 @@ const toolIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   UserRound,
 };
 
+// Force dynamic rendering to avoid stale CDN cache
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Explore - AI Studio",
   description: "Discover AI models, tools, and capabilities. Get inspired and start creating.",
