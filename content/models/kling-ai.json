@@ -18,11 +18,11 @@
     "Product demos and promotional videos"
   ],
   "comparisons": [
-    { "feature": "Max Duration", "kling-ai": "10s", "runway-gen3": "16s", "seedance-2": "10s" },
-    { "feature": "Resolution", "kling-ai": "1080p", "runway-gen3": "1080p", "seedance-2": "720p" },
-    { "feature": "Image to Video", "kling-ai": "Yes", "runway-gen3": "Yes", "seedance-2": "Yes" },
-    { "feature": "Text to Video", "kling-ai": "Yes", "runway-gen3": "Yes", "seedance-2": "Yes" },
-    { "feature": "Credits Cost", "kling-ai": "10", "runway-gen3": "10", "seedance-2": "10" }
+    { "feature": "Max Duration", "kling-ai": "10s", "runway-gen3": "16s", "luma-ai": "5s" },
+    { "feature": "Resolution", "kling-ai": "1080p", "runway-gen3": "1080p", "luma-ai": "720p" },
+    { "feature": "Image to Video", "kling-ai": "Yes", "runway-gen3": "Yes", "luma-ai": "Yes" },
+    { "feature": "Text to Video", "kling-ai": "Yes", "runway-gen3": "Yes", "luma-ai": "Yes" },
+    { "feature": "Credits Cost", "kling-ai": "10", "runway-gen3": "10", "luma-ai": "8" }
   ],
   "faq": [
     { "question": "Is Kling AI free to use?", "answer": "Yes! You get 20 free credits when you sign up. Each Kling AI video costs 10 credits, so you can create 2 videos for free to try it out." },
