@@ -33,8 +33,8 @@ describe("credit cost mapping", () => {
     expect(models["kling-ai"].creditsCost.TEXT_TO_VIDEO).toBe(10);
   });
 
-  it("IMAGE_TO_VIDEO on seedance-2 costs 10 credits", () => {
-    expect(models["seedance-2"].creditsCost.IMAGE_TO_VIDEO).toBe(10);
+  it("IMAGE_TO_VIDEO on runway-gen3 costs 10 credits", () => {
+    expect(models["runway-gen3"].creditsCost.IMAGE_TO_VIDEO).toBe(10);
   });
 
   it("TEXT_TO_IMAGE on flux-pro costs 3 credits", () => {

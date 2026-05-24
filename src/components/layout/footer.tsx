@@ -4,7 +4,7 @@ import { siteConfig } from "@/config/site";
 const footerLinks = {
   "Video Models": [
     { label: "Kling AI", href: "/models/kling-ai" },
-    { label: "Seedance 2.0", href: "/models/seedance-2" },
+    { label: "Luma AI", href: "/models/luma-ai" },
     { label: "Runway Gen-3", href: "/models/runway-gen3" },
     { label: "Luma AI", href: "/models/luma-ai" },
   ],

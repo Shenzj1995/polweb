@@ -8,7 +8,6 @@ describe("models config", () => {
   it("has all expected models", () => {
     const keys = Object.keys(models);
     expect(keys).toContain("kling-ai");
-    expect(keys).toContain("seedance-2");
     expect(keys).toContain("flux-schnell");
     expect(keys).toContain("flux-pro");
     expect(keys).toContain("runway-gen3");

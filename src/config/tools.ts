@@ -21,7 +21,7 @@ export const tools: Record<string, ToolConfig> = {
     inputType: "text",
     outputType: "video",
     icon: "Type",
-    models: ["kling-ai", "seedance-2", "runway-gen3", "luma-ai"],
+    models: ["kling-ai", "runway-gen3", "luma-ai"],
     creditsCost: 10,
   },
   "image-to-video": {
@@ -33,7 +33,7 @@ export const tools: Record<string, ToolConfig> = {
     inputType: "image",
     outputType: "video",
     icon: "ImagePlay",
-    models: ["kling-ai", "seedance-2", "runway-gen3", "luma-ai"],
+    models: ["kling-ai", "runway-gen3", "luma-ai"],
     creditsCost: 10,
   },
   "text-to-image": {

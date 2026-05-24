@@ -45,18 +45,6 @@ const modelMapping: Record<string, {
       ...(p.imageUrl ? { image: p.imageUrl } : {}),
     }),
   },
-  // Seedance video
-  "seedance-v2": {
-    model: "seedance-01",
-    taskType: "video_generation",
-    mapInput: (p) => ({
-      prompt: p.prompt || "",
-      negative_prompt: p.negativePrompt || "",
-      duration: Number(p.params.duration) || 5,
-      aspect_ratio: (p.params.aspectRatio as string) || "16:9",
-      ...(p.imageUrl ? { image: p.imageUrl } : {}),
-    }),
-  },
   // Runway video
   "runway-gen3": {
     model: "runway-gen3",
@@ -222,4 +210,3 @@ export class PiAPIProvider implements AIProvider {
     };
   }
 }
-// Build timestamp: 1779604510
