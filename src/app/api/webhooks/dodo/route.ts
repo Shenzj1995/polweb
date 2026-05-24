@@ -76,7 +76,9 @@ async function handleSubscriptionActive(payload: DodoWebhookPayload) {
   const userId = metadata.userId;
   if (!userId) return;
 
-  const planKey = getPlanKey(payload.product_id);
+  const productId = payload.product_id;
+  if (!productId) return;
+  const planKey = getPlanKey(productId);
   if (planKey === "FREE") return;
 
   const plan = PLANS[planKey];
@@ -114,7 +116,9 @@ async function handleSubscriptionRenewed(payload: DodoWebhookPayload) {
   const userId = metadata.userId;
   if (!userId) return;
 
-  const planKey = getPlanKey(payload.product_id);
+  const productId = payload.product_id;
+  if (!productId) return;
+  const planKey = getPlanKey(productId);
   if (planKey === "FREE") return;
 
   const plan = PLANS[planKey];

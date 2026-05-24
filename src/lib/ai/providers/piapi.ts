@@ -104,6 +104,21 @@ const modelMapping: Record<string, {
   },
 };
 
+interface PiAPITaskData {
+  status: string;
+  output?: {
+    image_url?: string;
+    video_url?: string;
+    works?: Array<{
+      video?: { resource?: string; resource_without_watermark?: string };
+      video_url?: string;
+      url?: string;
+      cover?: { resource?: string; resource_without_watermark?: string };
+    }>;
+  };
+  error?: { message?: string };
+}
+
 export class PiAPIProvider implements AIProvider {
   id = "piapi";
   name = "PiAPI";
@@ -123,7 +138,7 @@ export class PiAPIProvider implements AIProvider {
         task_type: mapping.taskType,
         input,
       }),
-    });
+    }) as { task_id: string; status: string };
 
     return {
       providerId: data.task_id,
@@ -132,7 +147,7 @@ export class PiAPIProvider implements AIProvider {
   }
 
   async getGenerationStatus(providerId: string): Promise<GenStatusResult> {
-    const data = await apiFetch(`/task/${providerId}`);
+    const data = await apiFetch(`/task/${providerId}`) as PiAPITaskData;
 
     const statusMap: Record<string, GenStatusResult["status"]> = {
       pending: "PENDING",
